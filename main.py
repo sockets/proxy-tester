@@ -18,7 +18,7 @@ SUCCESS = "[\x1b[32m+\x1b[37m] "
 
 timeout_period = 1
 
-class process_thread(threading.Thread):
+class ProcessThread(threading.Thread):
     def __init__(self, in_queue, out_queue):
         threading.Thread.__init__(self)
         self.in_queue = in_queue
@@ -54,7 +54,7 @@ class process_thread(threading.Thread):
         None
 
 
-class log_working(threading.Thread):
+class LogWorking(threading.Thread):
 	def __init__(self, queue, output_file):
 		threading.Thread.__init__(self)
 		self.queue = queue
@@ -75,7 +75,7 @@ class log_working(threading.Thread):
 
 
 def main():
-    # Check Argument Length
+	# Check Argument Length
 	if (len(sys.argv) < 4):
 		print("%s Incorrect usage!" % (ERROR))
 		print("%s Usage: %s <proxy list> <threads> <output file>" % (INFO, sys.argv[0]))
@@ -87,12 +87,12 @@ def main():
 		print(str(error))
 		exit(1)
 
-    # Check If File Is Empty
+	# Check If File Is Empty
 	if (len(ip_list) == 0):
 		print("%s Chosen file is blank" % (ERROR))
 		exit(1)
 
-    # Load Input Queue
+	# Load Input Queue
 	i = 0
 	for ip in ip_list:
 		input_queue.put(ip)
@@ -102,15 +102,15 @@ def main():
 
 	print("\n\n%s Checking %d proxies" % (INFO, len(ip_list)))
 
-    # Start Workers
+	# Start Workers
 	workers = []
 	for i in range(0, int(sys.argv[2])):
-		thread = process_thread(input_queue, result_queue)
+		thread = ProcessThread(input_queue, result_queue)
 		thread.daemon = True
 		thread.start()
 		workers.append(thread)
 
-	logger = log_working(result_queue, sys.argv[3])
+	logger = LogWorking(result_queue, sys.argv[3])
 	logger.daemon = True
 	logger.start()
 
